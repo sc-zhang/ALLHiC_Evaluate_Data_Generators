@@ -12,7 +12,7 @@ def GetOpts():
 	group.add_argument('-a', '--a_fasta', help='fasta file', required=True)
 	group.add_argument('-b', '--b_fasta', help='fasta file with same chromosome order with fasta file a', required=True)
 	group.add_argument('-o', '--output', help='filename of simulated data', required=True)
-	group.add_argument('-c', '--chimeric', type=float, help='persentage of chimeric region size, like 5 means 5%%, default: 10', default=10)
+	group.add_argument('-c', '--chimeric', type=float, help='percentage of chimeric region size, like 5 means 5%%, default: 10', default=10)
 	group.add_argument('-t', '--thread', type=int, help='thread number, default: 1', default=1)
 	return group.parse_args()
 
