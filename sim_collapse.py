@@ -12,7 +12,7 @@ def GetOpts():
 	group.add_argument('-o', '--output', help='filename of simulated data', required=True)
 	group.add_argument('-s', '--blast', help='blast file with format 6, must use first file of input as query and second file as database', required=True)
 	group.add_argument('-p', '--prefix', help='prefix of contig file a and contig file b, divided by comma, like: HA, HB, required when contig file contain same IDs', default="")
-	group.add_argument('-c', '--collapse', type=float, help='persentage of collapse region size, like 5 means 5%%, default: 10', default=10)
+	group.add_argument('-c', '--collapse', type=float, help='percentage of collapse region size, like 5 means 5%%, default: 10', default=10)
 
 	return group.parse_args()
 
