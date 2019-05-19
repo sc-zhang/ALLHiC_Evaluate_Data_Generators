@@ -5,7 +5,7 @@ Although we can use sim3C to simulate hic reads with reference genome, the fastq
 
 ### Step 1. Use sim3C to generate hic reads
 
-You can get [sim3C](https://github.com/cerebis/sim3C) here, and then run the command below to get hic reads.
+You can run the command below to get hic reads.
 
 ```bash
 sim3C.py -m hic -e MboI -n number_of_reads -l read_length --dist uniform ref_fasta out.fq
