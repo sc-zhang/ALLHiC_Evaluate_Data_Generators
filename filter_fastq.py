@@ -13,14 +13,14 @@ def filter_fastq(in_fq, in_list, out_fq):
 	fq_db = {}
 	print("Reading fastq")
 	with open(in_fq, 'r') as fin:
-        id = ""
-        cnt = 0
+		id = ""
+		cnt = 0
 		for line in fin:
 			if line[0] == '@' and cnt%4==0:
 				id = line[1:].strip().split()[0]
 				fq_db[id] = []
 			fq_db[id].append(line)
-            cnt += 1
+			cnt += 1
 	
 	print("Writing fastq")
 	with open(out_fq, 'w') as fout:
