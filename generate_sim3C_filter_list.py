@@ -21,22 +21,19 @@ def get_read_pos_with_sam_bam_file(sam_bam_file, chr_len_db, bin_size, out_list)
 	with pysam.AlignmentFile(sam_bam_file, 'rb') as fin:
 		with open(bin_size.upper()+"_"+out_list, 'w') as fout:
 			for line in fin:
-				if line.strip() == '' or line[0] == '@':
-					continue
-				if 'WGS' in line:
+				if 'WGS' in line.query_name:
 					fout.write(line.strip().split()[0]+"\n")
 					continue
-				data = line.strip().split()
-				read_id = data[0]
-				if data[2] == '*' or data[6] == '*':
+				read_id = line.query_name
+				
+				if line.is_unmapped or line.mate_is_unmapped:
 					continue
-				chr1 = data[2].replace('_pilon', '')
-				read_pos1 = int(data[3])
-				if data[6] != '=':
-					chr2 = data[6].replace('_pilon', '')
-				else:
-					chr2 = chr1
-				read_pos2 = int(data[7])
+
+				read_pos1 = line.reference_start+1
+				chr1 = line.reference_name
+				chr2 = line.next_reference_name
+				read_pos2 = line.next_reference_start +1
+				
 				if chr1 == chr2 and chr1 in chr_len_db:
 					bin_count_of_chr = int(round((chr_len_db[chr1]*1.0/long_bin_size+0.5)))
 					pos1_index = int(read_pos1/long_bin_size)
