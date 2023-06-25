@@ -5,6 +5,7 @@ import gc
 from math import *
 import time
 import random
+import pysam
 
 
 # Get position of read based on chr with sam or bam file
@@ -17,49 +18,44 @@ def get_read_pos_with_sam_bam_file(sam_bam_file, chr_len_db, bin_size, out_list)
 	
 	random.seed()
 	read_on_chr = {}
-	if sam_bam_file[-3:] == "bam":
-		f_in = os.popen("samtools view "+sam_bam_file, 'r')
-	else:
-		f_in = open(sam_bam_file, 'r')
-	
-	with open(bin_size.upper()+"_"+out_list, 'w') as fout:
-		for line in f_in:
-			if line.strip() == '' or line[0] == '@':
-				continue
-			if 'WGS' in line:
-				fout.write(line.strip().split()[0]+"\n")
-				continue
-			data = line.strip().split()
-			read_id = data[0]
-			if data[2] == '*' or data[6] == '*':
-				continue
-			chr1 = data[2].replace('_pilon', '')
-			read_pos1 = int(data[3])
-			if data[6] != '=':
-				chr2 = data[6].replace('_pilon', '')
-			else:
-				chr2 = chr1
-			read_pos2 = int(data[7])
-			if chr1 == chr2 and chr1 in chr_len_db:
-				bin_count_of_chr = int(round((chr_len_db[chr1]*1.0/long_bin_size+0.5)))
-				pos1_index = int(read_pos1/long_bin_size)
-				pos2_index = int(read_pos2/long_bin_size)
-				if (pos1_index+pos2_index) in range(bin_count_of_chr-11, bin_count_of_chr+10):
-					border = abs(bin_count_of_chr-1-(pos1_index+pos2_index))
-					
-					if abs(pos1_index-pos2_index) < 4:
-						border = 0
-					elif abs(pos1_index-pos2_index) < 7:
-						border = 1
-					else:
-						border = 4.0-int((border+1)/2)
-					if random.random() > 1.0/(2**border):
-						fout.write(read_id+'\n')
-						if read_id in read_on_chr:
-							read_on_chr.pop(read_id)
-						continue
-			read_on_chr[read_id] = [chr1, read_pos1, chr2, read_pos2]
-	f_in.close()
+	with pysam.AlignmentFile(sam_bam_file, 'rb') as fin:
+		with open(bin_size.upper()+"_"+out_list, 'w') as fout:
+			for line in fin:
+				if line.strip() == '' or line[0] == '@':
+					continue
+				if 'WGS' in line:
+					fout.write(line.strip().split()[0]+"\n")
+					continue
+				data = line.strip().split()
+				read_id = data[0]
+				if data[2] == '*' or data[6] == '*':
+					continue
+				chr1 = data[2].replace('_pilon', '')
+				read_pos1 = int(data[3])
+				if data[6] != '=':
+					chr2 = data[6].replace('_pilon', '')
+				else:
+					chr2 = chr1
+				read_pos2 = int(data[7])
+				if chr1 == chr2 and chr1 in chr_len_db:
+					bin_count_of_chr = int(round((chr_len_db[chr1]*1.0/long_bin_size+0.5)))
+					pos1_index = int(read_pos1/long_bin_size)
+					pos2_index = int(read_pos2/long_bin_size)
+					if (pos1_index+pos2_index) in range(bin_count_of_chr-11, bin_count_of_chr+10):
+						border = abs(bin_count_of_chr-1-(pos1_index+pos2_index))
+						
+						if abs(pos1_index-pos2_index) < 4:
+							border = 0
+						elif abs(pos1_index-pos2_index) < 7:
+							border = 1
+						else:
+							border = 4.0-int((border+1)/2)
+						if random.random() > 1.0/(2**border):
+							fout.write(read_id+'\n')
+							if read_id in read_on_chr:
+								read_on_chr.pop(read_id)
+							continue
+				read_on_chr[read_id] = [chr1, read_pos1, chr2, read_pos2]
 	return read_on_chr
 
 
