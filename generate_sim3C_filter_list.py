@@ -33,7 +33,7 @@ def get_read_pos_with_sam_bam_file(sam_bam_file, chr_len_db, bin_size, out_list)
 				chr1 = line.reference_name
 				chr2 = line.next_reference_name
 				read_pos2 = line.next_reference_start +1
-				
+
 				if chr1 == chr2 and chr1 in chr_len_db:
 					bin_count_of_chr = int(round((chr_len_db[chr1]*1.0/long_bin_size+0.5)))
 					pos1_index = int(read_pos1/long_bin_size)
@@ -190,7 +190,7 @@ def draw_heatmap(data, chrn, bin_size, ext):
 	else:
 		plt.title(title, y=1.1, fontsize=12)
 
-	plt.savefig(file_prefix+'.'+ext, filetype=ext, bbox_inches='tight', dpi=200)
+	plt.savefig(file_prefix+'.'+ext, bbox_inches='tight', dpi=200)
 	plt.close('all')
 
 
